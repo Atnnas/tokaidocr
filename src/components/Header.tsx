@@ -98,7 +98,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="desktop-only" style={{ display: 'flex', gap: '2.5rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, letterSpacing: '1.2px', fontSize: '0.85rem' }}>
+          <nav className="desktop-only" style={{ display: 'flex', gap: '3.75rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, letterSpacing: '1.2px', fontSize: '1.06rem' }}>
             <Link href="/" className="nav-link">INICIO</Link>
             <Link href="/shop" className="nav-link">TIENDA</Link>
             <Link href="/#about" className="nav-link" onClick={(e) => handleScrollToSection(e, 'about')}>SOBRE TOKAIDO</Link>
