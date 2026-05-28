@@ -75,19 +75,25 @@ export default function Header() {
               }}>
                 Tokaido
               </span>
-              <span style={{ 
-                fontFamily: 'var(--font-subtitle)', 
-                fontSize: '0.75rem', 
-                color: 'var(--accent-gold)', 
-                letterSpacing: '2.5px', 
-                textTransform: 'uppercase', 
-                fontWeight: 700, 
-                marginTop: '2px',
-                // Elegant gold glow
-                textShadow: '0 0 6px rgba(212, 175, 55, 0.45)'
-              }}>
-                Costa Rica
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                <span style={{ 
+                  fontFamily: 'var(--font-subtitle)', 
+                  fontSize: '0.75rem', 
+                  color: 'var(--accent-gold)', 
+                  letterSpacing: '2.5px', 
+                  textTransform: 'uppercase', 
+                  fontWeight: 700, 
+                  // Elegant gold glow
+                  textShadow: '0 0 6px rgba(212, 175, 55, 0.45)'
+                }}>
+                  Costa Rica
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 6" width="15" height="9" style={{ border: '0.5px solid rgba(255,255,255,0.2)', display: 'inline-block', flexShrink: 0, boxShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+                  <rect width="10" height="6" fill="#002F6C"/>
+                  <rect y="1" width="10" height="4" fill="#FFFFFF"/>
+                  <rect y="2" width="10" height="2" fill="#C8102E"/>
+                </svg>
+              </div>
             </div>
           </Link>
 
