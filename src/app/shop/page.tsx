@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Search, ArrowUpDown, ShieldCheck } from 'lucide-react';
+import MagicBento from '../../components/MagicBento';
 
 interface Product {
   _id: string;
@@ -213,77 +214,19 @@ function ShopContent() {
             ⚠️ ERROR: {error}
           </div>
         ) : sortedProducts.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2rem' }}>
-            {sortedProducts.map((product) => (
-              <div 
-                key={product._id} 
-                className="card" 
-                style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  padding: 0, 
-                  backgroundColor: 'white', 
-                  height: '100%',
-                  position: 'relative'
-                }}
-              >
-                {/* Product Image */}
-                <div style={{ 
-                  height: '240px', 
-                  backgroundImage: `linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.02)), url("${product.image}")`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  borderBottom: '1px solid var(--border-color)'
-                }} />
-                
-                {/* Product Tag Badge */}
-                {product.badge && (
-                  <span style={{ 
-                    position: 'absolute', 
-                    top: '15px', 
-                    left: '15px', 
-                    backgroundColor: product.badgeColor || 'var(--primary)', 
-                    color: 'white', 
-                    fontSize: '0.65rem', 
-                    padding: '3px 8px', 
-                    fontWeight: 700, 
-                    fontFamily: 'var(--font-subtitle)', 
-                    letterSpacing: '1px' 
-                  }}>
-                    {product.badge}
-                  </span>
-                )}
-
-                {/* Details */}
-                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem', color: 'var(--foreground)' }}>
-                      {product.name}
-                    </h3>
-                    <div style={{ color: 'var(--primary)', fontSize: '1.25rem', fontFamily: 'var(--font-title)', marginBottom: '0.75rem' }}>
-                      ₡{product.price.toLocaleString('es-CR')}
-                    </div>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--medium-gray)', lineHeight: '1.5', marginBottom: '1.5rem' }}>
-                      {product.description}
-                    </p>
-                  </div>
-
-                  {/* Actions - Hidden for future release */}
-                  {/* 
-                  <div>
-                    <button 
-                      onClick={() => handleAddToCart(product.name)}
-                      className="btn btn-primary" 
-                      style={{ width: '100%', fontSize: '0.8rem', padding: '0.6rem' }}
-                    >
-                      AÑADIR AL CARRITO
-                    </button>
-                  </div>
-                  */}
-                </div>
-              </div>
-            ))}
-          </div>
+          <MagicBento 
+            products={sortedProducts}
+            textAutoHide={true}
+            enableStars={true}
+            enableSpotlight={true}
+            enableBorderGlow={true}
+            enableTilt={true}
+            enableMagnetism={true}
+            clickEffect={true}
+            spotlightRadius={350}
+            particleCount={10}
+            glowColor="200, 16, 46"
+          />
         ) : (
           <div style={{ textAlign: 'center', padding: '4rem 0', border: '1px dashed var(--border-color)' }}>
             <h3 style={{ fontSize: '1.5rem', color: 'var(--medium-gray)' }}>No se encontraron productos</h3>
