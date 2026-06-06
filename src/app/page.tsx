@@ -249,19 +249,7 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Location Card */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '2.5rem 2rem' }}>
-              <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'rgba(17, 17, 17, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--foreground)', marginBottom: '1.25rem' }}>
-                <MapPin size={24} />
-              </div>
-              <h4 style={{ fontSize: '1.2rem', marginBottom: '0.75rem', fontFamily: 'var(--font-title)' }}>Punto de Entrega</h4>
-              <p style={{ fontSize: '0.85rem', color: 'var(--dark-gray)', lineHeight: '1.6', marginBottom: '1.5rem' }}>
-                Coordinamos entregas directas y envíos a todo el territorio de Costa Rica por Correos de Costa Rica o encomiendas autorizadas.
-              </p>
-              <div style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--foreground)', fontFamily: 'var(--font-subtitle)' }}>
-                San José, Costa Rica
-              </div>
-            </div>
+
           </div>
         </div>
       </section>
