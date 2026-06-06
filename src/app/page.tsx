@@ -88,18 +88,7 @@ export default function Home() {
         }} />
 
         <div style={{ maxWidth: '800px', zIndex: 2, position: 'relative' }}>
-          <span style={{ 
-            display: 'inline-block', 
-            color: 'var(--accent-gold)', 
-            fontSize: '0.85rem', 
-            fontFamily: 'var(--font-subtitle)', 
-            fontWeight: 700, 
-            letterSpacing: '4px', 
-            marginBottom: '1.25rem',
-            textShadow: '0 0 10px rgba(212, 175, 55, 0.7)'
-          }}>
-            SITIO EN CONSTRUCCIÓN
-          </span>
+
           <h1 style={{ 
             fontSize: '4.5rem', 
             color: '#FFFFFF', 
