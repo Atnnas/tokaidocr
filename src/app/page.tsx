@@ -152,7 +152,6 @@ export default function Home() {
             </p>
             <p style={{ fontSize: '1.05rem', color: 'var(--foreground)', fontWeight: 'bold', lineHeight: '1.7', fontFamily: 'var(--font-subtitle)' }}>
               ✓ Distribución autorizada en Costa Rica<br />
-              ✓ Servicio de bordado oficial en kanji y logo de dojo<br />
               ✓ Uniformes para Kata, Kumite y entrenamiento diario
             </p>
           </div>
