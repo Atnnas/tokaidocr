@@ -230,7 +230,7 @@ export default function Home() {
               <p style={{ fontSize: '0.85rem', color: 'var(--dark-gray)', lineHeight: '1.6', marginBottom: '1.5rem' }}>
                 Escríbenos directamente para consultar tallas, existencias de uniformes de Kata/Kumite, o cotizaciones especiales para dojos.
               </p>
-              <a href="https://wa.me/50681803125" target="_blank" rel="noopener noreferrer" className="btn btn-gold" style={{ width: '100%', fontSize: '0.8rem', padding: '0.6rem' }}>
+              <a href="https://wa.me/50687378597" target="_blank" rel="noopener noreferrer" className="btn btn-gold" style={{ width: '100%', fontSize: '0.8rem', padding: '0.6rem' }}>
                 CHATEAR EN WHATSAPP
               </a>
             </div>
