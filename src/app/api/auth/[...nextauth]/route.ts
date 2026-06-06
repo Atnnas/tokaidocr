@@ -37,9 +37,14 @@ export const authOptions: AuthOptions = {
               return true;
             }
             
-            // If database is not empty, deny entry to unauthorized/uninvited users
-            console.warn(`Bloqueo de inicio de sesión/registro para correo no pre-registrado: ${email}`);
-            return false;
+            // If database is not empty, create a new normal user (viewer)
+            await User.create({
+              name: name || email.split('@')[0],
+              email,
+              image: image || '',
+              role: 'viewer', // default role
+            });
+            return true;
           } else {
             // Update existing user information if changed
             let isModified = false;
