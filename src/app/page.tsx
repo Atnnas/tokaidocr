@@ -4,10 +4,8 @@ import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import Hyperspeed from '@/components/Hyperspeed';
-import { useSession } from 'next-auth/react';
 
 export default function Home() {
-  const { status } = useSession();
   // Smooth scroll handler on page mount if hash is present
   useEffect(() => {
     if (window.location.hash) {
@@ -119,11 +117,6 @@ export default function Home() {
             <Link href="/shop" className="btn btn-primary" style={{ padding: '0.9rem 2.8rem', boxShadow: '0 0 15px rgba(200, 16, 46, 0.4)' }}>
               VER TIENDA
             </Link>
-            {status === 'authenticated' && (
-              <Link href="/profile" className="btn btn-secondary" style={{ padding: '0.9rem 2.8rem', borderColor: '#FFFFFF', color: '#FFFFFF', backgroundColor: 'transparent' }}>
-                MI PERFIL
-              </Link>
-            )}
           </div>
         </div>
       </section>
