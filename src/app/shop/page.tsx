@@ -293,6 +293,12 @@ function ShopContent() {
   );
 }
 
+function ShopWrapper() {
+  const searchParams = useSearchParams();
+  const key = searchParams.toString();
+  return <ShopContent key={key} />;
+}
+
 export default function Shop() {
   return (
     <Suspense fallback={
@@ -300,7 +306,7 @@ export default function Shop() {
         <h3 style={{ fontSize: '1.5rem', color: 'var(--medium-gray)', fontFamily: 'var(--font-title)' }}>CARGANDO CATÁLOGO TOKAIDO...</h3>
       </div>
     }>
-      <ShopContent />
+      <ShopWrapper />
     </Suspense>
   );
 }
