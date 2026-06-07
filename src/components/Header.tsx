@@ -107,14 +107,16 @@ export default function Header() {
               onMouseEnter={() => setShopDropdownOpen(true)}
               onMouseLeave={() => setShopDropdownOpen(false)}
             >
-              <Link 
-                href="/shop"
+              <div 
                 className="nav-link" 
                 style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                onClick={() => setShopDropdownOpen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShopDropdownOpen(!shopDropdownOpen);
+                }}
               >
                 TIENDA <ChevronDown size={14} />
-              </Link>
+              </div>
               
               {shopDropdownOpen && (
                 <div style={{ 
