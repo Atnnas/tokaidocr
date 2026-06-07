@@ -102,21 +102,26 @@ export default function Header() {
           <nav className="desktop-only" style={{ display: 'flex', gap: '3.75rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, letterSpacing: '1.2px', fontSize: '1.06rem' }}>
             <Link href="/" className="nav-link">INICIO</Link>
             
-            <div style={{ position: 'relative' }}>
-              <div 
+            <div 
+              style={{ position: 'relative', paddingBottom: '1rem', marginBottom: '-1rem' }}
+              onMouseEnter={() => setShopDropdownOpen(true)}
+              onMouseLeave={() => setShopDropdownOpen(false)}
+            >
+              <Link 
+                href="/shop"
                 className="nav-link" 
                 style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                onClick={() => setShopDropdownOpen(!shopDropdownOpen)}
+                onClick={() => setShopDropdownOpen(false)}
               >
                 TIENDA <ChevronDown size={14} />
-              </div>
+              </Link>
               
               {shopDropdownOpen && (
                 <div style={{ 
                   position: 'absolute', 
                   top: '100%', 
                   left: '-20px', 
-                  marginTop: '1rem', 
+                  marginTop: '0', 
                   backgroundColor: '#0c0c0c', 
                   border: '2px solid var(--accent-gold)', 
                   padding: '0.5rem 0', 
