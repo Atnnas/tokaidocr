@@ -357,6 +357,28 @@ export default function Header() {
           width: 100%;
         }
 
+        .dropdown-item:hover {
+          color: var(--accent-gold) !important;
+          text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+          background-color: rgba(212, 175, 55, 0.05);
+        }
+        .dropdown-item {
+          position: relative;
+        }
+        .dropdown-item::after {
+          content: '';
+          position: absolute;
+          width: 0;
+          height: 2px;
+          bottom: 10px;
+          left: 1.2rem;
+          background-color: var(--accent-gold);
+          box-shadow: 0 0 8px var(--accent-gold);
+          transition: width var(--transition-fast);
+        }
+        .dropdown-item:hover::after {
+          width: calc(100% - 2.4rem);
+        }
         .desktop-only {
           display: flex;
         }
