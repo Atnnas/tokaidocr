@@ -16,7 +16,7 @@
   justify-content: space-between;
   position: relative;
   aspect-ratio: 4/3;
-  min-height: 260px;
+  min-height: 300px;
   width: 100%;
   max-width: 100%;
   padding: 1.5rem;
@@ -161,8 +161,16 @@
 
   .magic-bento-card {
     width: 100%;
-    min-height: 220px;
+    min-height: 340px;
     aspect-ratio: auto;
+  }
+
+  .magic-bento-card__image-container {
+    padding: 1.25rem 1rem 7.5rem 1rem;
+  }
+
+  .magic-bento-card__content {
+    padding: 0.85rem 1.25rem;
   }
 }
 
