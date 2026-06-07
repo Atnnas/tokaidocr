@@ -1,10 +1,120 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Search, ArrowUpDown, ShieldCheck } from 'lucide-react';
+import { gsap } from 'gsap';
 import MagicBento from '../../components/MagicBento';
+
+interface CategoryTitleProps {
+  text: string;
+}
+
+function CategoryTitle({ text }: CategoryTitleProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const chars = containerRef.current.querySelectorAll('.char');
+    
+    // Initial State: Letters start on the far left (-800px), tiny, highly rotated, gold
+    gsap.set(chars, { 
+      x: -800, 
+      opacity: 0, 
+      scale: 0.1,
+      rotation: -540,
+      color: '#D4AF37'
+    });
+
+    const tl = gsap.timeline();
+
+    // 1. Zoom and spin letters from left to right, ending up centered
+    tl.to(chars, {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      rotation: 0,
+      color: '#C8102E', // Tokaido Lacquer Crimson Red
+      duration: 1.1,
+      stagger: 0.035,
+      ease: 'back.out(1.6)',
+    });
+
+    // 2. Add a very elegant, soft multi-layered dark shadow that makes letters float off the screen
+    const Pop3DShadow = `
+      1px 1px 2px rgba(0, 0, 0, 0.1),
+      3px 3px 6px rgba(0, 0, 0, 0.15),
+      6px 6px 12px rgba(0, 0, 0, 0.2),
+      12px 12px 24px rgba(0, 0, 0, 0.25),
+      20px 20px 40px rgba(0, 0, 0, 0.3)
+    `;
+
+    tl.to(chars, {
+      textShadow: Pop3DShadow,
+      duration: 0.4,
+      stagger: 0.015,
+    }, '-=0.5');
+
+    // 3. Subtle, desopilante stagger bounce/pulse to finish
+    tl.to(chars, {
+      scale: 1.08,
+      yoyo: true,
+      repeat: 1,
+      duration: 0.12,
+      stagger: {
+        each: 0.02,
+        from: 'center'
+      }
+    }, '-=0.1');
+
+  }, [text]);
+
+  const characters = text.split('');
+
+  return (
+    <div 
+      ref={containerRef} 
+      style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        width: '100%',
+        padding: '1.8rem 0',
+        overflow: 'hidden',
+        position: 'relative',
+        background: 'radial-gradient(circle, rgba(200, 16, 46, 0.04) 0%, rgba(0, 0, 0, 0.02) 50%, transparent 80%)',
+        margin: '0.5rem 0 1.5rem',
+        borderRadius: '12px',
+        border: '1px solid rgba(0, 0, 0, 0.04)'
+      }}
+    >
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.2rem' }}>
+        {characters.map((char, index) => (
+          <span 
+            key={index} 
+            className="char"
+            style={{ 
+              display: 'inline-block', 
+              fontFamily: 'var(--font-title)', 
+              fontSize: '3.5rem', 
+              fontWeight: 'normal',
+              textTransform: 'uppercase', 
+              whiteSpace: char === ' ' ? 'pre' : 'normal',
+              letterSpacing: '3px',
+              userSelect: 'none',
+              transformStyle: 'preserve-3d'
+            }}
+          >
+            {char}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 interface Product {
   _id: string;
@@ -55,9 +165,7 @@ function ShopContent() {
 
   // Sync category state with search parameters on mount/change
   useEffect(() => {
-    if (catParam) {
-      setSelectedCategory(catParam);
-    }
+    setSelectedCategory(catParam || 'all');
   }, [catParam]);
 
   const handleAddToCart = (productName: string) => {
@@ -81,6 +189,12 @@ function ShopContent() {
     return 0; // default order
   });
 
+  const categoryText = selectedCategory === 'uniforms' ? 'KARATEGUIS' : 
+                       selectedCategory === 'protectors' ? 'PROTECCIONES' : 
+                       selectedCategory === 'equipment' ? 'EQUIPOS DE ENTRENAMIENTO' : 
+                       selectedCategory === 'belts' ? 'CINTURONES (OBIS)' : 
+                       'TODOS LOS PRODUCTOS';
+
   return (
     <div className="container" style={{ padding: '3rem 1.5rem' }}>
       {/* Header */}
@@ -91,18 +205,12 @@ function ShopContent() {
         </p>
       </div>
 
+      {/* Mind-blowing Animated Category Title Banner */}
+      <CategoryTitle text={categoryText} />
+
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem' }}>
         {/* Controls Bar */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--light-gray)', padding: '1rem', border: '1px solid var(--border-color)' }}>
-          {/* Selected Category Title */}
-          <h2 style={{ margin: 0, fontFamily: 'var(--font-title)', fontSize: '1.8rem', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            {selectedCategory === 'uniforms' ? 'KARATEGUIS' : 
-             selectedCategory === 'protectors' ? 'PROTECCIONES' : 
-             selectedCategory === 'equipment' ? 'EQUIPOS DE ENTRENAMIENTO' : 
-             selectedCategory === 'belts' ? 'CINTURONES (OBIS)' : 
-             'TODOS LOS PRODUCTOS'}
-          </h2>
-
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'flex-end', alignItems: 'center', backgroundColor: 'var(--light-gray)', padding: '1rem', border: '1px solid var(--border-color)' }}>
           {/* Search and Sort */}
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', flex: 1, justifyContent: 'flex-end' }}>
             {/* Search Input */}

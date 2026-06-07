@@ -364,7 +364,7 @@ const GlobalSpotlight = ({
       z-index: 200;
       opacity: 0;
       transform: translate(-50%, -50%);
-      mix-blend-mode: screen;
+      mix-blend-mode: normal;
     `;
     document.body.appendChild(spotlight);
     spotlightRef.current = spotlight;
@@ -539,7 +539,6 @@ const MagicBento = ({
           const cardGlowColor = isSpecial ? SPECIAL_GLOW_COLOR : (glowColor || DEFAULT_GLOW_COLOR);
 
           const cardStyle = {
-            backgroundImage: `url("${product.image}")`,
             '--glow-color': cardGlowColor
           } as React.CSSProperties;
 
@@ -556,20 +555,28 @@ const MagicBento = ({
               clickEffect={clickEffect}
               enableMagnetism={enableMagnetism}
             >
-              {/* Overlay for contrast */}
-              <div className="magic-bento-card__overlay" />
+              {/* Product Image Container (renders image natively with 100% sharpness) */}
+              <div className="magic-bento-card__image-container">
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="magic-bento-card__img" 
+                />
+              </div>
 
               <div className="magic-bento-card__header" data-glow-color={cardGlowColor}>
                 {product.badge ? (
                   <div className="magic-bento-card__label" style={{
-                    backgroundColor: isSpecial ? 'var(--accent-gold)' : 'var(--primary)'
+                    backgroundColor: isSpecial ? 'var(--accent-gold)' : 'var(--primary)',
+                    color: '#ffffff'
                   }}>
                     {product.badge}
                   </div>
                 ) : (
                   <div className="magic-bento-card__label" style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    color: 'rgba(255, 255, 255, 0.8)'
+                    backgroundColor: 'var(--light-gray)',
+                    color: 'var(--foreground)',
+                    border: '1px solid var(--border-color)'
                   }}>
                     {product.category === 'uniforms' ? 'Uniforme' : product.category === 'belts' ? 'Cinturón' : 'Protección'}
                   </div>
