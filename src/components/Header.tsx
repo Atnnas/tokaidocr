@@ -133,38 +133,38 @@ export default function Header() {
                   display: 'flex',
                   flexDirection: 'column'
                 }}>
-                  <Link 
+                  <a 
                     href="/shop" 
                     onClick={() => setShopDropdownOpen(false)}
-                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s' }}
+                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s', display: 'block' }}
                     className="dropdown-item"
                   >
                     TODOS LOS PRODUCTOS
-                  </Link>
-                  <Link 
+                  </a>
+                  <a 
                     href="/shop?category=uniforms" 
                     onClick={() => setShopDropdownOpen(false)}
-                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s' }}
+                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s', display: 'block' }}
                     className="dropdown-item"
                   >
                     KARATEGUIS
-                  </Link>
-                  <Link 
+                  </a>
+                  <a 
                     href="/shop?category=protectors" 
                     onClick={() => setShopDropdownOpen(false)}
-                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s' }}
+                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s', display: 'block' }}
                     className="dropdown-item"
                   >
                     PROTECCIONES
-                  </Link>
-                  <Link 
+                  </a>
+                  <a 
                     href="/shop?category=equipment" 
                     onClick={() => setShopDropdownOpen(false)}
-                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s' }}
+                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s', display: 'block' }}
                     className="dropdown-item"
                   >
                     EQUIPOS DE ENTRENAMIENTO
-                  </Link>
+                  </a>
                 </div>
               )}
             </div>
@@ -306,7 +306,7 @@ export default function Header() {
         <div style={{ backgroundColor: '#0c0c0c', borderTop: '1px solid #222222', padding: '1rem 0', position: 'absolute', width: '100%', left: 0, boxShadow: '0 10px 20px rgba(0,0,0,0.8)' }}>
           <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700 }}>
             <Link href="/" className="nav-link" onClick={() => setMobileMenuOpen(false)}>INICIO</Link>
-            <Link href="/shop" className="nav-link" onClick={() => setMobileMenuOpen(false)}>TIENDA</Link>
+            <a href="/shop" className="nav-link" onClick={() => setMobileMenuOpen(false)}>TIENDA</a>
             <Link 
               href="/#about" 
               className="nav-link" 
