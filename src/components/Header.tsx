@@ -9,6 +9,7 @@ export default function Header() {
   const { data: session, status } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
 
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     if (typeof window !== 'undefined' && window.location.pathname === '/') {
@@ -100,7 +101,66 @@ export default function Header() {
           {/* Desktop Navigation Links */}
           <nav className="desktop-only" style={{ display: 'flex', gap: '3.75rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, letterSpacing: '1.2px', fontSize: '1.06rem' }}>
             <Link href="/" className="nav-link">INICIO</Link>
-            <Link href="/shop" className="nav-link">TIENDA</Link>
+            
+            <div style={{ position: 'relative' }}>
+              <div 
+                className="nav-link" 
+                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                onClick={() => setShopDropdownOpen(!shopDropdownOpen)}
+              >
+                TIENDA <ChevronDown size={14} />
+              </div>
+              
+              {shopDropdownOpen && (
+                <div style={{ 
+                  position: 'absolute', 
+                  top: '100%', 
+                  left: '-20px', 
+                  marginTop: '1rem', 
+                  backgroundColor: '#0c0c0c', 
+                  border: '2px solid var(--accent-gold)', 
+                  padding: '0.5rem 0', 
+                  minWidth: '220px', 
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.9), 0 0 10px rgba(212, 175, 55, 0.2)', 
+                  zIndex: 110,
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}>
+                  <Link 
+                    href="/shop" 
+                    onClick={() => setShopDropdownOpen(false)}
+                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s' }}
+                    className="dropdown-item"
+                  >
+                    TODOS LOS PRODUCTOS
+                  </Link>
+                  <Link 
+                    href="/shop?category=uniforms" 
+                    onClick={() => setShopDropdownOpen(false)}
+                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s' }}
+                    className="dropdown-item"
+                  >
+                    KARATEGUIS
+                  </Link>
+                  <Link 
+                    href="/shop?category=protectors" 
+                    onClick={() => setShopDropdownOpen(false)}
+                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s' }}
+                    className="dropdown-item"
+                  >
+                    PROTECCIONES
+                  </Link>
+                  <Link 
+                    href="/shop?category=equipment" 
+                    onClick={() => setShopDropdownOpen(false)}
+                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s' }}
+                    className="dropdown-item"
+                  >
+                    EQUIPOS DE ENTRENAMIENTO
+                  </Link>
+                </div>
+              )}
+            </div>
             <Link href="/#about" className="nav-link" onClick={(e) => handleScrollToSection(e, 'about')}>SOBRE TOKAIDO</Link>
             <Link href="/#contact" className="nav-link" onClick={(e) => handleScrollToSection(e, 'contact')}>CONTACTO</Link>
           </nav>
