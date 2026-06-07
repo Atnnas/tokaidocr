@@ -10,6 +10,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
+  const [mobileShopOpen, setMobileShopOpen] = useState(false);
 
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     if (typeof window !== 'undefined' && window.location.pathname === '/') {
@@ -306,7 +307,94 @@ export default function Header() {
         <div style={{ backgroundColor: '#0c0c0c', borderTop: '1px solid #222222', padding: '1rem 0', position: 'absolute', width: '100%', left: 0, boxShadow: '0 10px 20px rgba(0,0,0,0.8)' }}>
           <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700 }}>
             <Link href="/" className="nav-link" onClick={() => setMobileMenuOpen(false)}>INICIO</Link>
-            <a href="/shop" className="nav-link" onClick={() => setMobileMenuOpen(false)}>TIENDA</a>
+            
+            {/* Expandable TIENDA section */}
+            <div>
+              <div 
+                className="nav-link" 
+                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                onClick={() => setMobileShopOpen(!mobileShopOpen)}
+              >
+                TIENDA 
+                <ChevronDown 
+                  size={16} 
+                  style={{ 
+                    transition: 'transform 0.3s ease', 
+                    transform: mobileShopOpen ? 'rotate(180deg)' : 'rotate(0deg)' 
+                  }} 
+                />
+              </div>
+              
+              {mobileShopOpen && (
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '0.6rem', 
+                  marginTop: '0.75rem', 
+                  paddingLeft: '1rem',
+                  borderLeft: '2px solid var(--accent-gold)',
+                  marginLeft: '0.25rem'
+                }}>
+                  <a 
+                    href="/shop" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ 
+                      fontSize: '0.9rem', 
+                      color: '#CCCCCC', 
+                      padding: '0.4rem 0.6rem',
+                      transition: 'all 0.2s',
+                      borderRadius: '4px'
+                    }}
+                    className="mobile-shop-link"
+                  >
+                    TODOS LOS PRODUCTOS
+                  </a>
+                  <a 
+                    href="/shop?category=uniforms" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ 
+                      fontSize: '0.9rem', 
+                      color: '#CCCCCC', 
+                      padding: '0.4rem 0.6rem',
+                      transition: 'all 0.2s',
+                      borderRadius: '4px'
+                    }}
+                    className="mobile-shop-link"
+                  >
+                    KARATEGUIS
+                  </a>
+                  <a 
+                    href="/shop?category=protectors" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ 
+                      fontSize: '0.9rem', 
+                      color: '#CCCCCC', 
+                      padding: '0.4rem 0.6rem',
+                      transition: 'all 0.2s',
+                      borderRadius: '4px'
+                    }}
+                    className="mobile-shop-link"
+                  >
+                    PROTECCIONES
+                  </a>
+                  <a 
+                    href="/shop?category=equipment" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ 
+                      fontSize: '0.9rem', 
+                      color: '#CCCCCC', 
+                      padding: '0.4rem 0.6rem',
+                      transition: 'all 0.2s',
+                      borderRadius: '4px'
+                    }}
+                    className="mobile-shop-link"
+                  >
+                    EQUIPOS DE ENTRENAMIENTO
+                  </a>
+                </div>
+              )}
+            </div>
+
             <Link 
               href="/#about" 
               className="nav-link" 
@@ -378,6 +466,12 @@ export default function Header() {
         }
         .dropdown-item:hover::after {
           width: calc(100% - 2.4rem);
+        }
+        .mobile-shop-link:hover,
+        .mobile-shop-link:active {
+          color: var(--accent-gold) !important;
+          background-color: rgba(212, 175, 55, 0.08);
+          text-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
         }
         .desktop-only {
           display: flex;

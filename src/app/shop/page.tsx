@@ -99,11 +99,11 @@ function CategoryTitle({ text }: CategoryTitleProps) {
             style={{ 
               display: 'inline-block', 
               fontFamily: 'var(--font-title)', 
-              fontSize: '3.5rem', 
+              fontSize: 'clamp(1.6rem, 5vw, 3.5rem)', 
               fontWeight: 'normal',
               textTransform: 'uppercase', 
               whiteSpace: char === ' ' ? 'pre' : 'normal',
-              letterSpacing: '3px',
+              letterSpacing: 'clamp(1px, 0.3vw, 3px)',
               userSelect: 'none',
               transformStyle: 'preserve-3d'
             }}
