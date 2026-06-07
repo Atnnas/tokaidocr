@@ -21,7 +21,7 @@ interface Product {
 
 function ShopContent() {
   const searchParams = useSearchParams();
-  const catParam = searchParams.get('cat');
+  const catParam = searchParams.get('category');
   
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,69 +94,7 @@ function ShopContent() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem' }}>
         {/* Controls Bar */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--light-gray)', padding: '1rem', border: '1px solid var(--border-color)' }}>
-          {/* Category Filter Pills */}
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <button 
-              onClick={() => setSelectedCategory('all')} 
-              style={{ 
-                padding: '0.5rem 1rem', 
-                border: 'none', 
-                background: selectedCategory === 'all' ? 'var(--foreground)' : 'white', 
-                color: selectedCategory === 'all' ? 'white' : 'var(--foreground)',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                fontFamily: 'var(--font-subtitle)',
-                cursor: 'pointer'
-              }}
-            >
-              TODOS
-            </button>
-            <button 
-              onClick={() => setSelectedCategory('uniforms')} 
-              style={{ 
-                padding: '0.5rem 1rem', 
-                border: 'none', 
-                background: selectedCategory === 'uniforms' ? 'var(--foreground)' : 'white', 
-                color: selectedCategory === 'uniforms' ? 'white' : 'var(--foreground)',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                fontFamily: 'var(--font-subtitle)',
-                cursor: 'pointer'
-              }}
-            >
-              UNIFORMES (DOGIS)
-            </button>
-            <button 
-              onClick={() => setSelectedCategory('belts')} 
-              style={{ 
-                padding: '0.5rem 1rem', 
-                border: 'none', 
-                background: selectedCategory === 'belts' ? 'var(--foreground)' : 'white', 
-                color: selectedCategory === 'belts' ? 'white' : 'var(--foreground)',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                fontFamily: 'var(--font-subtitle)',
-                cursor: 'pointer'
-              }}
-            >
-              CINTURONES (OBIS)
-            </button>
-            <button 
-              onClick={() => setSelectedCategory('protectors')} 
-              style={{ 
-                padding: '0.5rem 1rem', 
-                border: 'none', 
-                background: selectedCategory === 'protectors' ? 'var(--foreground)' : 'white', 
-                color: selectedCategory === 'protectors' ? 'white' : 'var(--foreground)',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                fontFamily: 'var(--font-subtitle)',
-                cursor: 'pointer'
-              }}
-            >
-              PROTECCIONES
-            </button>
-          </div>
+          {/* Removed Category Filter Pills */}
 
           {/* Search and Sort */}
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', flex: 1, justifyContent: 'flex-end' }}>
