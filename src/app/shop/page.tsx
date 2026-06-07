@@ -94,7 +94,14 @@ function ShopContent() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem' }}>
         {/* Controls Bar */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--light-gray)', padding: '1rem', border: '1px solid var(--border-color)' }}>
-          {/* Removed Category Filter Pills */}
+          {/* Selected Category Title */}
+          <h2 style={{ margin: 0, fontFamily: 'var(--font-title)', fontSize: '1.8rem', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            {selectedCategory === 'uniforms' ? 'KARATEGUIS' : 
+             selectedCategory === 'protectors' ? 'PROTECCIONES' : 
+             selectedCategory === 'equipment' ? 'EQUIPOS DE ENTRENAMIENTO' : 
+             selectedCategory === 'belts' ? 'CINTURONES (OBIS)' : 
+             'TODOS LOS PRODUCTOS'}
+          </h2>
 
           {/* Search and Sort */}
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', flex: 1, justifyContent: 'flex-end' }}>
