@@ -33,8 +33,18 @@ async function dbConnect() {
   }
 
   if (!cached!.promise) {
-    const opts = {
+    // Configured based on mongodb-connection skill for Next.js / serverless environments:
+    // - maxPoolSize: 10 prevents connection exhaustion across serverless lambda containers
+    // - minPoolSize: 0 allows idle connections to close and free MongoDB memory
+    // - maxIdleTimeMS: 30000 closes inactive connections after 30 seconds
+    // - serverSelectionTimeoutMS: 5000 fails fast instead of hanging requests
+    const opts: mongoose.ConnectOptions = {
       bufferCommands: false,
+      maxPoolSize: 10,
+      minPoolSize: 0,
+      maxIdleTimeMS: 30000,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     };
 
     cached!.promise = mongoose.connect(MONGODB_URI!, opts).then((mongooseInstance) => {

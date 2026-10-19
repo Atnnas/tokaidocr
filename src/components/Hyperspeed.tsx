@@ -383,6 +383,23 @@ const Hyperspeed = ({ effectOptions }: { effectOptions?: HyperspeedOptions }) =>
       }
     };
 
+    class SimpleClock {
+      startTime: number = typeof performance !== 'undefined' ? performance.now() : Date.now();
+      oldTime: number = typeof performance !== 'undefined' ? performance.now() : Date.now();
+
+      getDelta(): number {
+        const newTime = typeof performance !== 'undefined' ? performance.now() : Date.now();
+        const diff = (newTime - this.oldTime) / 1000;
+        this.oldTime = newTime;
+        return diff;
+      }
+
+      get elapsedTime(): number {
+        const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+        return (now - this.startTime) / 1000;
+      }
+    }
+
     class App {
       options: any;
       container: HTMLDivElement;
@@ -392,7 +409,7 @@ const Hyperspeed = ({ effectOptions }: { effectOptions?: HyperspeedOptions }) =>
       camera!: THREE.PerspectiveCamera;
       scene!: THREE.Scene;
       fogUniforms!: any;
-      clock!: THREE.Clock;
+      clock!: any;
       assets: any;
       disposed: boolean;
       road!: Road;
@@ -443,8 +460,8 @@ const Hyperspeed = ({ effectOptions }: { effectOptions?: HyperspeedOptions }) =>
           fogNear: { value: fog.near },
           fogFar: { value: fog.far }
         };
-        this.clock = new THREE.Clock();
         this.assets = {};
+        this.clock = new SimpleClock();
         this.disposed = false;
 
         this.road = new Road(this, options);

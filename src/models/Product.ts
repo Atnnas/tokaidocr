@@ -54,6 +54,13 @@ const ProductSchema: Schema<IProduct> = new Schema<IProduct>(
   }
 );
 
+// Performance indexes based on mongodb-schema-design skill:
+// - Index category and price for shop filters and sorting
+// - Text index for full-text search on product catalog
+ProductSchema.index({ category: 1 });
+ProductSchema.index({ price: 1 });
+ProductSchema.index({ name: 'text', description: 'text' });
+
 // Prevent compiling model multiple times due to Next.js HMR
 const Product: Model<IProduct> = mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema);
 

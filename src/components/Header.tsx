@@ -1,491 +1,843 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { ShoppingBag, User, Search, Menu, X, LogOut, ChevronDown, Shield } from 'lucide-react';
+import { 
+  User, 
+  Menu, 
+  X, 
+  LogOut, 
+  ChevronDown, 
+  Search, 
+  ShoppingBag, 
+  Heart,
+  PhoneCall,
+  ArrowRight
+} from 'lucide-react';
 
 export default function Header() {
   const { data: session, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
-  const [mobileShopOpen, setMobileShopOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    if (typeof window !== 'undefined' && window.location.pathname === '/') {
-      e.preventDefault();
-      const element = document.getElementById(targetId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-        window.history.pushState(null, '', `/#${targetId}`);
+  const shopDropdownRef = useRef<HTMLLIElement>(null);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const shopCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleShopMouseEnter = () => {
+    if (shopCloseTimeoutRef.current) {
+      clearTimeout(shopCloseTimeoutRef.current);
+      shopCloseTimeoutRef.current = null;
+    }
+    setShopDropdownOpen(true);
+  };
+
+  const handleShopMouseLeave = () => {
+    if (shopCloseTimeoutRef.current) {
+      clearTimeout(shopCloseTimeoutRef.current);
+    }
+    shopCloseTimeoutRef.current = setTimeout(() => {
+      setShopDropdownOpen(false);
+    }, 250);
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (shopDropdownRef.current && !shopDropdownRef.current.contains(event.target as Node)) {
+        setShopDropdownOpen(false);
       }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setShopDropdownOpen(false);
+    return () => {
+      if (shopCloseTimeoutRef.current) clearTimeout(shopCloseTimeoutRef.current);
+    };
+  }, [pathname]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+      setSearchQuery('');
+    } else {
+      router.push('/shop');
     }
   };
 
   return (
-    <header 
-      className="header-wrapper" 
-      style={{ 
-        width: '100%', 
-        position: 'sticky', 
-        top: 0, 
-        zIndex: 100, 
-        // 3D Shadow with a Crimson Glow effect
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.9), 0 2px 10px rgba(200, 16, 46, 0.45)'
-      }}
-    >
-      
-      {/* Main Navbar */}
-      <div 
-        className="main-nav" 
-        style={{ 
-          padding: '0.85rem 0', 
-          backgroundColor: '#0c0c0c', // Deeper black for higher contrast
-          borderBottom: '3.5px solid var(--primary)',
-          position: 'relative'
-        }}
-      >
-        {/* Subtle metallic reflection line on top of the border */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px', backgroundColor: 'rgba(255, 255, 255, 0.15)', zIndex: 2 }}></div>
-
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          
-          {/* Brand Logo & Title */}
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-            <img 
-              src="/tokaido.png" 
-              alt="Tokaido" 
-              // Premium red glow on logo icon
-              style={{ 
-                height: '52px', 
-                width: 'auto', 
-                filter: 'brightness(1) drop-shadow(0 0 8px rgba(200, 16, 46, 0.7))' 
-              }} 
-            />
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <span style={{ 
-                fontFamily: 'var(--font-title)', 
-                fontSize: '1.75rem', 
-                color: '#FFFFFF', 
-                letterSpacing: '1px', 
-                textTransform: 'uppercase', 
-                lineHeight: 1, 
-                fontWeight: 'bold',
-                // Metallic 3D drop shadow
-                textShadow: '1px 2px 3px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.1)'
-              }}>
-                Tokaido
-              </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-                <span style={{ 
-                  fontFamily: 'var(--font-subtitle)', 
-                  fontSize: '0.75rem', 
-                  color: 'var(--accent-gold)', 
-                  letterSpacing: '2.5px', 
-                  textTransform: 'uppercase', 
-                  fontWeight: 700, 
-                  // Elegant gold glow
-                  textShadow: '0 0 6px rgba(212, 175, 55, 0.45)'
-                }}>
-                  Costa Rica
-                </span>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 6" width="15" height="9" style={{ border: '0.5px solid rgba(255,255,255,0.2)', display: 'inline-block', flexShrink: 0, boxShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
-                  <rect width="10" height="6" fill="#002F6C"/>
-                  <rect y="1" width="10" height="4" fill="#FFFFFF"/>
-                  <rect y="2" width="10" height="2" fill="#C8102E"/>
-                </svg>
-              </div>
+    <header className="tokaido-header">
+      <div className="header-inner">
+        {/* 1. BRAND LOGO */}
+        <div className="header-logo-area">
+          <Link href="/" className="logo-anchor" aria-label="Tokaido Costa Rica - Inicio" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
+            <div style={{ width: '40px', height: '40px', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+              <img 
+                src="/tokaido_symbol.png" 
+                alt="Tokaido" 
+                style={{ height: '40px', width: 'auto', objectFit: 'contain' }}
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: 900, letterSpacing: '0.5px', color: '#111111', fontFamily: 'var(--font-title, sans-serif)' }}>TOKAIDO</span>
+              <span style={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '1.8px', color: '#E50914' }}>COSTA RICA</span>
             </div>
           </Link>
+        </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="desktop-only" style={{ display: 'flex', gap: '3.75rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, letterSpacing: '1.2px', fontSize: '1.06rem' }}>
-            <Link href="/" className="nav-link">INICIO</Link>
-            
-            <div 
-              style={{ position: 'relative', paddingBottom: '1rem', marginBottom: '-1rem' }}
-              onMouseEnter={() => setShopDropdownOpen(true)}
-              onMouseLeave={() => setShopDropdownOpen(false)}
-            >
-              <div 
-                className="nav-link" 
-                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShopDropdownOpen(!shopDropdownOpen);
-                }}
+        {/* 2. MAIN NAVIGATION */}
+        <nav className="header-nav-menu desktop-only" aria-label="Navegación principal">
+          <ul className="nav-list">
+            <li>
+              <Link 
+                href="/" 
+                className={`nav-item ${pathname === '/' ? 'active' : ''}`}
               >
-                TIENDA <ChevronDown size={14} />
-              </div>
-              
-              {shopDropdownOpen && (
-                <div style={{ 
-                  position: 'absolute', 
-                  top: '100%', 
-                  left: '-20px', 
-                  marginTop: '0', 
-                  backgroundColor: '#0c0c0c', 
-                  border: '2px solid var(--accent-gold)', 
-                  padding: '0.5rem 0', 
-                  minWidth: '220px', 
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.9), 0 0 10px rgba(212, 175, 55, 0.2)', 
-                  zIndex: 110,
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}>
-                  <a 
-                    href="/shop" 
-                    onClick={() => setShopDropdownOpen(false)}
-                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s', display: 'block' }}
-                    className="dropdown-item"
-                  >
-                    TODOS LOS PRODUCTOS
-                  </a>
-                  <a 
-                    href="/shop?category=uniforms" 
-                    onClick={() => setShopDropdownOpen(false)}
-                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s', display: 'block' }}
-                    className="dropdown-item"
-                  >
-                    KARATEGUIS
-                  </a>
-                  <a 
-                    href="/shop?category=protectors" 
-                    onClick={() => setShopDropdownOpen(false)}
-                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s', display: 'block' }}
-                    className="dropdown-item"
-                  >
-                    PROTECCIONES
-                  </a>
-                  <a 
-                    href="/shop?category=equipment" 
-                    onClick={() => setShopDropdownOpen(false)}
-                    style={{ padding: '0.8rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF', transition: 'all 0.2s', display: 'block' }}
-                    className="dropdown-item"
-                  >
-                    EQUIPOS DE ENTRENAMIENTO
-                  </a>
-                </div>
-              )}
-            </div>
-            <Link href="/#about" className="nav-link" onClick={(e) => handleScrollToSection(e, 'about')}>SOBRE TOKAIDO</Link>
-            <Link href="/#contact" className="nav-link" onClick={(e) => handleScrollToSection(e, 'contact')}>CONTACTO</Link>
-          </nav>
-
-          {/* Action Icons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', color: '#FFFFFF' }}>
-            
-            {/* Auth Buttons */}
-            <div style={{ position: 'relative' }}>
-              {status === 'authenticated' ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }} onClick={() => setUserDropdownOpen(!userDropdownOpen)}>
-                  {session.user?.image ? (
-                    <img 
-                      src={session.user.image} 
-                      alt={session.user.name || 'User'} 
-                      style={{ 
-                        width: '30px', 
-                        height: '30px', 
-                        borderRadius: '50%', 
-                        border: '2px solid var(--accent-gold)', 
-                        objectFit: 'cover',
-                        boxShadow: '0 0 8px rgba(212, 175, 55, 0.5)'
-                      }}
-                    />
-                  ) : (
-                    <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                      {session.user?.name ? session.user.name[0] : 'U'}
-                    </div>
-                  )}
-                  <span style={{ fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '2px', color: '#FFFFFF' }} className="desktop-only">
-                    {session.user?.name?.split(' ')[0]} <ChevronDown size={12} />
-                  </span>
-                </div>
-              ) : (
-                <button 
-                  onClick={() => signIn('google')} 
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#FFFFFF' }}
-                  title="Iniciar Sesión"
-                >
-                  <User size={20} />
-                  <span style={{ fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700 }} className="desktop-only">INGRESAR</span>
-                </button>
-              )}
-
-              {/* User Dropdown */}
-              {userDropdownOpen && status === 'authenticated' && (
-                <div style={{ 
-                  position: 'absolute', 
-                  right: 0, 
-                  marginTop: '0.75rem', 
-                  backgroundColor: '#0c0c0c', 
-                  border: '2px solid var(--accent-gold)', 
-                  padding: '0.5rem 0', 
-                  minWidth: '180px', 
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.9), 0 0 10px rgba(212, 175, 55, 0.2)', 
-                  zIndex: 110 
-                }}>
-                  <Link 
-                    href="/profile" 
-                    onClick={() => setUserDropdownOpen(false)}
-                    style={{ display: 'block', padding: '0.6rem 1.2rem', fontSize: '0.85rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700, color: '#FFFFFF' }}
-                  >
-                    MI PERFIL
-                  </Link>
-
-                  {/* Admin Panel Link */}
-                  <Link 
-                    href="/admin" 
-                    onClick={() => setUserDropdownOpen(false)}
-                    style={{ 
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '0.6rem 1.2rem', 
-                      fontSize: '0.85rem', 
-                      color: 'var(--accent-gold)', 
-                      fontFamily: 'var(--font-subtitle)', 
-                      fontWeight: 700,
-                      borderTop: '1px solid #222222',
-                      textShadow: '0 0 4px rgba(212, 175, 55, 0.3)'
-                    }}
-                  >
-                    <Shield size={13} />
-                    ADMINISTRACIÓN
-                  </Link>
-
-                  <button 
-                    onClick={() => { signOut(); setUserDropdownOpen(false); }} 
-                    style={{ 
-                      display: 'flex', 
-                      width: '100%', 
-                      alignItems: 'center', 
-                      gap: '0.5rem', 
-                      padding: '0.6rem 1.2rem', 
-                      border: 'none', 
-                      background: 'transparent', 
-                      cursor: 'pointer', 
-                      textAlign: 'left', 
-                      fontSize: '0.85rem', 
-                      fontFamily: 'var(--font-subtitle)', 
-                      fontWeight: 700, 
-                      borderTop: '1px solid #222222', 
-                      color: 'var(--primary)' 
-                    }}
-                  >
-                    <LogOut size={14} /> CERRAR SESIÓN
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Shopping Cart Icon (Static Badge) - Hidden for future implementation */}
-            {/* 
-            <Link href="/shop" style={{ position: 'relative', display: 'flex', alignItems: 'center', color: '#FFFFFF' }}>
-              <ShoppingBag size={20} />
-              <span style={{ position: 'absolute', top: '-8px', right: '-8px', backgroundColor: 'var(--primary)', color: 'white', fontSize: '0.65rem', padding: '1px 5px', borderRadius: '50%', fontWeight: 'bold', boxShadow: '0 0 8px var(--primary)' }}>
-                0
-              </span>
-            </Link>
-            */}
-
-            {/* Mobile Menu Icon */}
-            <button 
-              className="mobile-only" 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'none', color: '#FFFFFF' }}
+                Inicio
+              </Link>
+            </li>
+            <li>
+              <Link 
+                href="/#about" 
+                className="nav-item"
+              >
+                Nosotros
+              </Link>
+            </li>
+            <li 
+              ref={shopDropdownRef} 
+              className={`dropdown-li ${shopDropdownOpen ? 'is-open' : ''}`}
+              onMouseEnter={handleShopMouseEnter}
+              onMouseLeave={handleShopMouseLeave}
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <Link 
+                href="/shop" 
+                className={`nav-item dropdown-toggle ${pathname?.startsWith('/shop') ? 'active' : ''}`}
+                aria-expanded={shopDropdownOpen}
+                onClick={() => setShopDropdownOpen(false)}
+              >
+                <span>Productos</span>
+                <ChevronDown size={14} className={`dropdown-arrow ${shopDropdownOpen ? 'rotated' : ''}`} />
+              </Link>
+
+              <ul 
+                className={`dropdown-flyout ${shopDropdownOpen ? 'is-open' : ''}`}
+                role="menu"
+                onMouseEnter={handleShopMouseEnter}
+                onMouseLeave={handleShopMouseLeave}
+              >
+                <li className="dropdown-li-item">
+                  <Link 
+                    href="/shop?search=Kumite" 
+                    className="simple-dropdown-item" 
+                    onClick={() => setShopDropdownOpen(false)}
+                  >
+                    Kumite Master II WKF
+                  </Link>
+                </li>
+
+                <li className="dropdown-li-item">
+                  <Link 
+                    href="/shop?search=Kata" 
+                    className="simple-dropdown-item" 
+                    onClick={() => setShopDropdownOpen(false)}
+                  >
+                    Kata Master WKF - Corte Americano
+                  </Link>
+                </li>
+
+                <li className="dropdown-li-item">
+                  <Link 
+                    href="/shop?search=Espinillera" 
+                    className="simple-dropdown-item" 
+                    onClick={() => setShopDropdownOpen(false)}
+                  >
+                    Espinillera WKF
+                  </Link>
+                </li>
+
+                <li className="dropdown-li-item">
+                  <Link 
+                    href="/shop?search=Guantin" 
+                    className="simple-dropdown-item" 
+                    onClick={() => setShopDropdownOpen(false)}
+                  >
+                    Guantin De Competencia WKF
+                  </Link>
+                </li>
+
+                <li className="dropdown-li-item">
+                  <Link 
+                    href="/shop?search=Pectoral" 
+                    className="simple-dropdown-item" 
+                    onClick={() => setShopDropdownOpen(false)}
+                  >
+                    Pectoral Unisex WKF
+                  </Link>
+                </li>
+
+                <li className="dropdown-li-item">
+                  <Link 
+                    href="/shop?search=Femenino" 
+                    className="simple-dropdown-item" 
+                    onClick={() => setShopDropdownOpen(false)}
+                  >
+                    Protector Femenino WKF
+                  </Link>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <Link 
+                href="/contact" 
+                className={`nav-item ${pathname === '/contact' ? 'active' : ''}`}
+              >
+                Contáctenos
+              </Link>
+            </li>
+          </ul>
+        </nav>
+
+        {/* 3. RIGHT UTILITIES */}
+        <div className="header-right-cluster">
+          {/* Search Trigger */}
+          {searchOpen ? (
+            <form onSubmit={handleSearchSubmit} className="search-popup-bar" role="search">
+              <input 
+                ref={searchInputRef}
+                type="search" 
+                placeholder="Buscar equipo..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+                className="search-input-field"
+              />
+              <button 
+                type="button" 
+                onClick={() => setSearchOpen(false)}
+                className="search-btn-close"
+                aria-label="Cerrar búsqueda"
+              >
+                <X size={15} />
+              </button>
+            </form>
+          ) : (
+            <button 
+              type="button" 
+              onClick={() => {
+                setSearchOpen(true);
+                setTimeout(() => searchInputRef.current?.focus(), 50);
+              }}
+              className="icon-utility-btn"
+              aria-label="Buscar producto"
+            >
+              <Search size={18} />
             </button>
+          )}
+
+          {/* User Account */}
+          <div ref={userDropdownRef} className="user-account-container">
+            {status === 'authenticated' && session?.user ? (
+              <>
+                <button 
+                  type="button" 
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="icon-utility-btn"
+                  aria-label="Perfil de usuario"
+                >
+                  <User size={18} />
+                </button>
+                {userDropdownOpen && (
+                  <div className="user-dropdown-card">
+                    <div className="user-card-head">
+                      <strong>{session.user.name}</strong>
+                      <span>{session.user.email}</span>
+                    </div>
+                    <Link href="/profile" className="user-card-link" onClick={() => setUserDropdownOpen(false)}>
+                      Mi Perfil
+                    </Link>
+                    {session.user.role === 'admin' && (
+                      <Link href="/admin" className="user-card-link admin" onClick={() => setUserDropdownOpen(false)}>
+                        Panel Admin
+                      </Link>
+                    )}
+                    <button 
+                      type="button" 
+                      onClick={() => { signOut(); setUserDropdownOpen(false); }}
+                      className="user-card-link logout"
+                    >
+                      <LogOut size={13} />
+                      <span>Cerrar Sesión</span>
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <button 
+                type="button" 
+                onClick={() => signIn('google')}
+                className="icon-utility-btn"
+                aria-label="Iniciar sesión"
+                title="Iniciar sesión"
+              >
+                <User size={18} />
+              </button>
+            )}
           </div>
+
+          {/* Wishlist Icon */}
+          <Link href="/shop" className="icon-utility-btn wishlist-btn desktop-only" aria-label="Lista de deseos">
+            <Heart size={18} />
+            <span className="count-badge">0</span>
+          </Link>
+
+          {/* WhatsApp / Phone Box */}
+          <div className="phone-cart-capsule desktop-only">
+            <Link href="/shop" className="cart-icon-wrap" aria-label="Carrito de compras">
+              <ShoppingBag size={19} />
+              <span className="cart-badge">0</span>
+            </Link>
+            <div className="phone-copy-wrap">
+              <span className="phone-label">CELULAR/WHATSAPP</span>
+              <a 
+                href="https://wa.me/50687378597?text=Hola,%20quisiera%20asesoría%20sobre%20equipamiento%20Tokaido%20en%20Costa%20Rica"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="phone-num-link"
+              >
+                (+506) 8737-8597
+              </a>
+            </div>
+          </div>
+
+          {/* Mobile Hamburger Trigger */}
+          <button 
+            type="button" 
+            className="mobile-hamburger-btn mobile-only"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* MOBILE DRAWER */}
       {mobileMenuOpen && (
-        <div style={{ backgroundColor: '#0c0c0c', borderTop: '1px solid #222222', padding: '1rem 0', position: 'absolute', width: '100%', left: 0, boxShadow: '0 10px 20px rgba(0,0,0,0.8)' }}>
-          <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontFamily: 'var(--font-subtitle)', fontWeight: 700 }}>
-            <Link href="/" className="nav-link" onClick={() => setMobileMenuOpen(false)}>INICIO</Link>
-            
-            {/* Expandable TIENDA section */}
-            <div>
-              <div 
-                className="nav-link" 
-                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-                onClick={() => setMobileShopOpen(!mobileShopOpen)}
-              >
-                TIENDA 
-                <ChevronDown 
-                  size={16} 
-                  style={{ 
-                    transition: 'transform 0.3s ease', 
-                    transform: mobileShopOpen ? 'rotate(180deg)' : 'rotate(0deg)' 
-                  }} 
-                />
+        <div className="mobile-drawer-sheet">
+          <ul className="mobile-nav-list">
+            <li>
+              <Link href="/" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                Inicio
+              </Link>
+            </li>
+            <li>
+              <Link href="/#about" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                Nosotros
+              </Link>
+            </li>
+            <li>
+              <Link href="/shop" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                Productos
+              </Link>
+              <div className="mobile-subnav">
+                <Link href="/shop?search=Kumite" onClick={() => setMobileMenuOpen(false)}>Kumite Master II WKF</Link>
+                <Link href="/shop?search=Kata" onClick={() => setMobileMenuOpen(false)}>Kata Master WKF - Corte Americano</Link>
+                <Link href="/shop?search=Espinillera" onClick={() => setMobileMenuOpen(false)}>Espinillera WKF</Link>
+                <Link href="/shop?search=Guantin" onClick={() => setMobileMenuOpen(false)}>Guantin De Competencia WKF</Link>
+                <Link href="/shop?search=Pectoral" onClick={() => setMobileMenuOpen(false)}>Pectoral Unisex WKF</Link>
+                <Link href="/shop?search=Femenino" onClick={() => setMobileMenuOpen(false)}>Protector Femenino WKF</Link>
               </div>
-              
-              {mobileShopOpen && (
-                <div style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '0.6rem', 
-                  marginTop: '0.75rem', 
-                  paddingLeft: '1rem',
-                  borderLeft: '2px solid var(--accent-gold)',
-                  marginLeft: '0.25rem'
-                }}>
-                  <a 
-                    href="/shop" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{ 
-                      fontSize: '0.9rem', 
-                      color: '#CCCCCC', 
-                      padding: '0.4rem 0.6rem',
-                      transition: 'all 0.2s',
-                      borderRadius: '4px'
-                    }}
-                    className="mobile-shop-link"
-                  >
-                    TODOS LOS PRODUCTOS
-                  </a>
-                  <a 
-                    href="/shop?category=uniforms" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{ 
-                      fontSize: '0.9rem', 
-                      color: '#CCCCCC', 
-                      padding: '0.4rem 0.6rem',
-                      transition: 'all 0.2s',
-                      borderRadius: '4px'
-                    }}
-                    className="mobile-shop-link"
-                  >
-                    KARATEGUIS
-                  </a>
-                  <a 
-                    href="/shop?category=protectors" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{ 
-                      fontSize: '0.9rem', 
-                      color: '#CCCCCC', 
-                      padding: '0.4rem 0.6rem',
-                      transition: 'all 0.2s',
-                      borderRadius: '4px'
-                    }}
-                    className="mobile-shop-link"
-                  >
-                    PROTECCIONES
-                  </a>
-                  <a 
-                    href="/shop?category=equipment" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{ 
-                      fontSize: '0.9rem', 
-                      color: '#CCCCCC', 
-                      padding: '0.4rem 0.6rem',
-                      transition: 'all 0.2s',
-                      borderRadius: '4px'
-                    }}
-                    className="mobile-shop-link"
-                  >
-                    EQUIPOS DE ENTRENAMIENTO
-                  </a>
-                </div>
-              )}
-            </div>
+            </li>
+            <li>
+              <Link href="/contact" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                Contáctenos
+              </Link>
+            </li>
+          </ul>
 
-            <Link 
-              href="/#about" 
-              className="nav-link" 
-              onClick={(e) => { 
-                setMobileMenuOpen(false); 
-                handleScrollToSection(e, 'about'); 
-              }}
+          <div className="mobile-phone-banner">
+            <span className="m-label">CELULAR / WHATSAPP COSTA RICA</span>
+            <a 
+              href="https://wa.me/50687378597?text=Hola,%20quisiera%20asesoría%20sobre%20equipamiento%20Tokaido%20en%20Costa%20Rica"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="m-phone"
             >
-              SOBRE TOKAIDO
-            </Link>
-            <Link 
-              href="/#contact" 
-              className="nav-link" 
-              onClick={(e) => { 
-                setMobileMenuOpen(false); 
-                handleScrollToSection(e, 'contact'); 
-              }}
-            >
-              CONTACTO
-            </Link>
+              (+506) 8737-8597
+            </a>
           </div>
         </div>
       )}
 
-      {/* Custom inline Styles for links */}
-      <style jsx global>{`
-        .nav-link {
-          position: relative;
-          color: #E2E2E2;
-          transition: all var(--transition-fast);
-        }
-        .nav-link:hover {
-          color: var(--accent-gold) !important;
-          text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
-        }
-        .nav-link::after {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 2.5px;
-          bottom: -4px;
-          left: 0;
-          background-color: var(--accent-gold);
-          box-shadow: 0 0 8px var(--accent-gold);
-          transition: width var(--transition-fast);
-        }
-        .nav-link:hover::after {
-          width: 100%;
+      {/* STYLES */}
+      <style jsx>{`
+        .tokaido-header {
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          background: #FFFFFF;
+          border-bottom: 1px solid #EAEAEA;
+          box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+          font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
         }
 
-        .dropdown-item:hover {
-          color: var(--accent-gold) !important;
-          text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
-          background-color: rgba(212, 175, 55, 0.05);
+        .header-inner {
+          max-width: 1480px;
+          margin: 0 auto;
+          height: 80px;
+          padding: 0 2rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 2rem;
         }
-        .dropdown-item {
+
+        /* 1. Logo */
+        .header-logo-area {
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+        }
+
+        .tokaido-brand-logo {
+          height: 38px;
+          width: auto;
+          object-fit: contain;
+          display: block;
+        }
+
+        /* 2. Navigation */
+        .header-nav-menu {
+          display: flex;
+          align-items: center;
+          height: 100%;
+        }
+
+        .nav-list {
+          display: flex;
+          align-items: center;
+          height: 100%;
+          gap: 2.2rem;
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .nav-list > li {
+          height: 100%;
+          display: flex;
+          align-items: center;
+        }
+
+        .nav-item {
+          font-size: 0.95rem;
+          font-weight: 500;
+          color: #222222;
+          text-decoration: none;
+          transition: color 0.15s ease;
           position: relative;
+          display: flex;
+          align-items: center;
+          height: 100%;
+          padding: 0 0.25rem;
         }
-        .dropdown-item::after {
+
+        .nav-item:hover,
+        .nav-item.active {
+          color: #E50914;
+        }
+
+        .dropdown-li {
+          position: relative;
+          display: flex;
+          align-items: center;
+          height: 100%;
+        }
+
+        .dropdown-toggle {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          cursor: pointer;
+        }
+
+        .dropdown-arrow {
+          transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dropdown-li:hover .dropdown-arrow,
+        .dropdown-li.is-open .dropdown-arrow,
+        .dropdown-arrow.rotated {
+          transform: rotate(180deg);
+        }
+
+        .dropdown-flyout {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          width: 290px;
+          background: #FFFFFF;
+          border: 1px solid #EAEAEA;
+          border-radius: 4px;
+          padding: 0.8rem 0;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(4px);
+          pointer-events: none;
+          transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.18s;
+          z-index: 1000;
+          list-style: none;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* Invisible bridge connecting the toggle button and the flyout */
+        .dropdown-flyout::before {
           content: '';
           position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: 10px;
-          left: 1.2rem;
-          background-color: var(--accent-gold);
-          box-shadow: 0 0 8px var(--accent-gold);
-          transition: width var(--transition-fast);
+          top: -14px;
+          left: 0;
+          right: 0;
+          height: 14px;
+          background: transparent;
         }
-        .dropdown-item:hover::after {
-          width: calc(100% - 2.4rem);
+
+        .dropdown-li:hover .dropdown-flyout,
+        .dropdown-flyout:hover,
+        .dropdown-flyout.is-open {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+          pointer-events: auto;
         }
-        .mobile-shop-link:hover,
-        .mobile-shop-link:active {
-          color: var(--accent-gold) !important;
-          background-color: rgba(212, 175, 55, 0.08);
-          text-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+
+        .dropdown-li-item {
+          display: block !important;
+          width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          list-style: none !important;
         }
+
+        .dropdown-flyout :global(a.simple-dropdown-item),
+        .simple-dropdown-item {
+          display: block !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          padding: 0.65rem 1.6rem !important;
+          font-size: 0.95rem !important;
+          font-weight: 600 !important;
+          color: #111111 !important;
+          line-height: 1.35 !important;
+          text-decoration: none !important;
+          background-color: transparent !important;
+          transition: color 0.15s ease, background-color 0.15s ease, padding-left 0.15s ease !important;
+        }
+
+        /* Iluminación al pasar el mouse */
+        .dropdown-flyout :global(a.simple-dropdown-item:hover),
+        .simple-dropdown-item:hover {
+          color: #E50914 !important;
+          background-color: #FAFAFA !important;
+          padding-left: 1.85rem !important;
+        }
+
+        /* 3. Right Cluster */
+        .header-right-cluster {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          flex-shrink: 0;
+        }
+
+        .icon-utility-btn {
+          background: transparent;
+          border: none;
+          color: #333333;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.4rem;
+          transition: color 0.15s ease;
+          position: relative;
+        }
+
+        .icon-utility-btn:hover {
+          color: #E50914;
+        }
+
+        .wishlist-btn {
+          position: relative;
+        }
+
+        .count-badge {
+          position: absolute;
+          top: -2px;
+          right: -4px;
+          background: #E50914;
+          color: #FFFFFF;
+          font-size: 0.65rem;
+          font-weight: 700;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .search-popup-bar {
+          display: flex;
+          align-items: center;
+          border: 1px solid #D0D0D0;
+          border-radius: 999px;
+          padding: 0.35rem 0.8rem;
+          background: #F9F9F9;
+        }
+
+        .search-input-field {
+          border: none;
+          outline: none;
+          background: transparent;
+          font-size: 0.85rem;
+          color: #111111;
+          width: 160px;
+        }
+
+        .search-btn-close {
+          background: transparent;
+          border: none;
+          color: #888888;
+          cursor: pointer;
+          padding: 0;
+        }
+
+        /* Phone & Cart Capsule */
+        .phone-cart-capsule {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+          padding-left: 1rem;
+          border-left: 1px solid #EBEBEB;
+        }
+
+        .cart-icon-wrap {
+          position: relative;
+          color: #222222;
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+        }
+
+        .cart-badge {
+          position: absolute;
+          top: -4px;
+          right: -8px;
+          background: #E50914;
+          color: #FFFFFF;
+          font-size: 0.65rem;
+          font-weight: 700;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .phone-copy-wrap {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.2;
+        }
+
+        .phone-label {
+          font-size: 0.65rem;
+          font-weight: 600;
+          color: #777777;
+          letter-spacing: 0.5px;
+        }
+
+        .phone-num-link {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: #E50914;
+          text-decoration: none;
+        }
+
+        /* User Menu */
+        .user-account-container {
+          position: relative;
+        }
+
+        .user-dropdown-card {
+          position: absolute;
+          top: calc(100% + 10px);
+          right: 0;
+          width: 220px;
+          background: #FFFFFF;
+          border: 1px solid #EAEAEA;
+          border-radius: 8px;
+          padding: 0.5rem;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+          z-index: 10;
+        }
+
+        .user-card-head {
+          padding: 0.4rem 0.6rem 0.6rem;
+          border-bottom: 1px solid #EEEEEE;
+          margin-bottom: 0.35rem;
+        }
+
+        .user-card-head strong {
+          display: block;
+          font-size: 0.85rem;
+          color: #111111;
+        }
+
+        .user-card-head span {
+          display: block;
+          font-size: 0.72rem;
+          color: #777777;
+        }
+
+        .user-card-link {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 0.6rem;
+          font-size: 0.82rem;
+          color: #444444;
+          text-decoration: none;
+          border-radius: 6px;
+          width: 100%;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+        }
+
+        .user-card-link:hover {
+          background: #F5F5F5;
+          color: #111111;
+        }
+
+        .user-card-link.admin {
+          color: #D4AF37;
+          font-weight: 600;
+        }
+
+        .user-card-link.logout {
+          color: #E50914;
+        }
+
+        .mobile-hamburger-btn {
+          background: transparent;
+          border: none;
+          color: #111111;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer-sheet {
+          background: #FFFFFF;
+          border-top: 1px solid #EAEAEA;
+          padding: 1.5rem 2rem 2.5rem;
+        }
+
+        .mobile-nav-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .mobile-nav-item {
+          font-size: 1.05rem;
+          font-weight: 600;
+          color: #111111;
+          text-decoration: none;
+          display: block;
+        }
+
+        .mobile-subnav {
+          padding-left: 1rem;
+          margin-top: 0.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .mobile-subnav a {
+          font-size: 0.88rem;
+          color: #666666;
+          text-decoration: none;
+        }
+
+        .mobile-phone-banner {
+          margin-top: 1.5rem;
+          padding-top: 1rem;
+          border-top: 1px solid #EAEAEA;
+        }
+
+        .m-label {
+          display: block;
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: #888888;
+        }
+
+        .m-phone {
+          display: block;
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: #E50914;
+          text-decoration: none;
+          margin-top: 0.2rem;
+        }
+
         .desktop-only {
           display: flex;
         }
+
         .mobile-only {
           display: none;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
           .desktop-only {
             display: none !important;
           }
           .mobile-only {
-            display: block !important;
+            display: flex !important;
+          }
+          .header-inner {
+            padding: 0 1.25rem;
+            height: 70px;
           }
         }
       `}</style>

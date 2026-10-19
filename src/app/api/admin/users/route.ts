@@ -52,13 +52,10 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Rol inválido' }, { status: 400 });
     }
 
-    // Developer helper: Allow the current user to modify their own role to test all 3 views
-    const isSelfModification = requester._id.toString() === userId;
-
-    // Role-based restrictions:
-    // 1. Viewers cannot change roles at all (except self-modification for testing)
-    if (requester.role === 'viewer' && !isSelfModification) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+    // Role-based restrictions (enforced by security-and-hardening skill):
+    // Only Administrators are permitted to modify user roles
+    if (requester.role !== 'admin') {
+      return NextResponse.json({ error: 'No autorizado. Se requieren permisos de Administrador para modificar roles.' }, { status: 403 });
     }
 
     // Find the target user being modified
@@ -67,20 +64,11 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
     }
 
-    // 2. Editors cannot assign or modify the Admin role (except self-modification for testing)
-    if (requester.role === 'editor' && !isSelfModification) {
-      if (targetUser.role === 'admin' || role === 'admin') {
-        return NextResponse.json({ error: 'Los editores no pueden asignar ni modificar el rol de Administrador.' }, { status: 403 });
-      }
-    }
-
-    // 3. Admins have full access, but cannot demote themselves if they are the last admin
-    if (requester.role === 'admin') {
-      if (requester._id.toString() === userId && role !== 'admin') {
-        const otherAdminsCount = await User.countDocuments({ role: 'admin', _id: { $ne: requester._id } });
-        if (otherAdminsCount === 0) {
-          return NextResponse.json({ error: 'No puedes quitarte el rol de administrador porque eres el único administrador en el sistema.' }, { status: 400 });
-        }
+    // Admins cannot demote themselves if they are the sole administrator
+    if (requester._id.toString() === userId && role !== 'admin') {
+      const otherAdminsCount = await User.countDocuments({ role: 'admin', _id: { $ne: requester._id } });
+      if (otherAdminsCount === 0) {
+        return NextResponse.json({ error: 'No puedes quitarte el rol de administrador porque eres el único administrador en el sistema.' }, { status: 400 });
       }
     }
 

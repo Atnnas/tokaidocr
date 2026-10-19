@@ -113,21 +113,26 @@ const BentoCard = ({
     particlesInitialized.current = true;
   }, [particleCount, glowColor]);
 
-  const clearAllParticles = useCallback(() => {
+  const clearAllParticles = useCallback((immediate = false) => {
     timeoutsRef.current.forEach(clearTimeout);
     timeoutsRef.current = [];
     magnetismAnimationRef.current?.kill();
 
     particlesRef.current.forEach(particle => {
-      gsap.to(particle, {
-        scale: 0,
-        opacity: 0,
-        duration: 0.3,
-        ease: 'back.in(1.7)',
-        onComplete: () => {
-          particle.parentNode?.removeChild(particle);
-        }
-      });
+      gsap.killTweensOf(particle);
+      if (immediate) {
+        particle.remove();
+      } else {
+        gsap.to(particle, {
+          scale: 0,
+          opacity: 0,
+          duration: 0.3,
+          ease: 'back.in(1.7)',
+          onComplete: () => {
+            particle.remove();
+          }
+        });
+      }
     });
     particlesRef.current = [];
   }, []);
@@ -308,7 +313,8 @@ const BentoCard = ({
       element.removeEventListener('mouseleave', handleMouseLeave);
       element.removeEventListener('mousemove', handleMouseMove);
       element.removeEventListener('click', handleClick);
-      clearAllParticles();
+      clearAllParticles(true);
+      gsap.killTweensOf(element);
     };
   }, [animateParticles, clearAllParticles, disableAnimations, enableTilt, enableMagnetism, clickEffect, glowColor, enableStars]);
 

@@ -36,10 +36,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Categoría inválida' }, { status: 400 });
     }
 
+    const numericPrice = Number(price);
+    if (isNaN(numericPrice) || numericPrice < 0) {
+      return NextResponse.json({ error: 'El precio debe ser un número positivo válido' }, { status: 400 });
+    }
+
     const newProduct = await Product.create({
       name: name.trim(),
       category,
-      price: Number(price),
+      price: numericPrice,
       description: description.trim(),
       image: image.trim(),
       badge: badge ? badge.trim() : '',
@@ -74,7 +79,13 @@ export async function PATCH(request: Request) {
       }
       updateFields.category = category;
     }
-    if (price !== undefined) updateFields.price = Number(price);
+    if (price !== undefined) {
+      const numPrice = Number(price);
+      if (isNaN(numPrice) || numPrice < 0) {
+        return NextResponse.json({ error: 'El precio debe ser un número positivo válido' }, { status: 400 });
+      }
+      updateFields.price = numPrice;
+    }
     if (description) updateFields.description = description.trim();
     if (image) updateFields.image = image.trim();
     if (badge !== undefined) updateFields.badge = badge.trim();
